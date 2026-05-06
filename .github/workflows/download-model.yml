@@ -1,37 +1,8 @@
-name: Download AI Model to Repo
-on: 
-  workflow_dispatch: 
-
-permissions:
-  contents: write
-
-jobs:
-  download-model:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Folders
-        run: mkdir -p brain/onnx
-
-      - name: Download Real Model Files
+      - name: Download Model dari CDN (Bukan HF)
         run: |
-          # Download config & tokenizer ke folder brain
-          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/config.json" -o brain/config.json
-          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/tokenizer.json" -o brain/tokenizer.json
-          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/tokenizer_config.json" -o brain/tokenizer_config.json
-          
-          # Download model ONNX (si otak utama) ke folder brain/onnx
-          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/onnx/model_quantized.onnx" -o brain/onnx/model_quantized.onnx
-
-      - name: Commit and Push Model
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add brain/
-          git commit -m "Fix: Download real AI model files (MB not bytes)" || echo "No changes to commit"
-          git push
-
+          mkdir -p brain/onnx
+          # Kita pake JSDelivr biar lancar jaya
+          curl -L "https://cdn.jsdelivr.net/gh/xenova/transformers.js@main/models/Xenova/SmolLM-135M-Instruct/config.json" -o brain/config.json
+          curl -L "https://cdn.jsdelivr.net/gh/xenova/transformers.js@main/models/Xenova/SmolLM-135M-Instruct/tokenizer.json" -o brain/tokenizer.json
+          curl -L "https://cdn.jsdelivr.net/gh/xenova/transformers.js@main/models/Xenova/SmolLM-135M-Instruct/tokenizer_config.json" -o brain/tokenizer_config.json
+          curl -L "https://cdn.jsdelivr.net/gh/xenova/transformers.js@main/models/Xenova/SmolLM-135M-Instruct/onnx/model_quantized.onnx" -o brain/onnx/model_quantized.onnx
