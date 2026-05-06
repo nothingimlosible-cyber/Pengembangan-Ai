@@ -1,8 +1,8 @@
-      - name: Download Model dari CDN (Bukan HF)
+      - name: Download Model Jalur Cepat
         run: |
           mkdir -p brain/onnx
-          # Kita pake JSDelivr biar lancar jaya
-          curl -L "https://cdn.jsdelivr.net/gh/xenova/transformers.js@main/models/Xenova/SmolLM-135M-Instruct/config.json" -o brain/config.json
-          curl -L "https://cdn.jsdelivr.net/gh/xenova/transformers.js@main/models/Xenova/SmolLM-135M-Instruct/tokenizer.json" -o brain/tokenizer.json
-          curl -L "https://cdn.jsdelivr.net/gh/xenova/transformers.js@main/models/Xenova/SmolLM-135M-Instruct/tokenizer_config.json" -o brain/tokenizer_config.json
-          curl -L "https://cdn.jsdelivr.net/gh/xenova/transformers.js@main/models/Xenova/SmolLM-135M-Instruct/onnx/model_quantized.onnx" -o brain/onnx/model_quantized.onnx
+          # Kita pake link download langsung (raw)
+          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/config.json" -o brain/config.json
+          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/tokenizer.json" -o brain/tokenizer.json
+          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/tokenizer_config.json" -o brain/tokenizer_config.json
+          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/onnx/model_quantized.onnx" -o brain/onnx/model_quantized.onnx
