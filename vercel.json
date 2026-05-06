@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/brain/onnx/(.*)",
+      "source": "/brain/(.*)",
       "headers": [
         { "key": "Content-Type", "value": "application/octet-stream" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
