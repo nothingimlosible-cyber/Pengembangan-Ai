@@ -1,6 +1,6 @@
 import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
 
-// Paksa pakai folder 'otak' hasil download Action tadi
+// WAJIB: Jangan cari ke internet, pake file di repo
 env.allowRemoteModels = false;
 env.localModelPath = './'; 
 
@@ -9,28 +9,31 @@ let model = null;
 export async function bangunkanModel() {
     if (model) return true;
     try {
-        console.log("Menghubungkan ke folder otak/onnx...");
-        // Memanggil model 20MB di folder kamu
+        console.log("Menghubungkan ke folder otak...");
+        
+        // Kita panggil folder 'otak'. 
+        // Transformers.js akan otomatis cari config.json di situ
+        // Dan kita kasih tahu kalau modelnya ada di dalem sub-folder onnx
         model = await pipeline('text-generation', 'otak', {
             quantized: true,
             model_file_name: 'onnx/model_quantized.onnx' 
         });
-        console.log("OTAK AKTIF!");
+        
+        console.log("OTAK BERHASIL AKTIF!");
         return true;
     } catch (e) {
-        console.error("Gagal! Pastikan folder 'otak/onnx' ada.", e);
+        // Kalau ini muncul, berarti Vercel nge-block filenya (Butuh vercel.json)
+        console.error("Gagal akses folder otak:", e);
         return false;
     }
 }
 
-// INI FUNGSI YANG KAMU KASIH TADI, SUDAH MASUK SINI
 export async function tanyaModel(teksUser, dataTambang) {
     if (!model) {
         const siap = await bangunkanModel();
-        if (!siap) return "Sistem gagal akses otak lokal.";
+        if (!siap) return "Gagal memuat otak. Cek apakah folder 'otak' sudah ada di GitHub.";
     }
 
-    // Prompt cerdas buatanmu
     const prompt = `<|im_start|>system
 Kamu adalah Core Intelligence, asisten pribadi Alan yang cerdas dan berwawasan luas.
 Gunakan info ini HANYA JIKA RELEVAN: "${dataTambang}"
