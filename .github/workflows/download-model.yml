@@ -1,6 +1,10 @@
 name: Download AI Model to Repo
 on: 
-  workflow_dispatch: # Biar kamu bisa klik "Run" manual dari menu Actions
+  workflow_dispatch: 
+
+# INI KUNCINYA: Kasih izin buat nulis ke repo
+permissions:
+  contents: write
 
 jobs:
   download-model:
@@ -8,25 +12,27 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Brain Folder
-        run: mkdir -p brain
+        run: mkdir -p brain/onnx
 
-      - name: Download SmolLM Model Files
+      - name: Download Model Files
         run: |
           cd brain
           curl -L -O https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/config.json
           curl -L -O https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/tokenizer.json
           curl -L -O https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/tokenizer_config.json
-          curl -L -O https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/special_tokens_map.json
-          mkdir -p onnx
           cd onnx
           curl -L -O https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/onnx/model_quantized.onnx
 
       - name: Commit and Push Model
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add brain/
-          git commit -m "Add local AI model files to brain folder"
-          git push
+          # Cek dulu ada perubahan gak, biar gak error kalau push kosong
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Add local AI model files to brain folder" && git push)
