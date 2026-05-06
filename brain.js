@@ -1,6 +1,6 @@
 import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
 
-// Matikan internet, paksa pake file di repo kamu sendiri
+// Paksa pakai folder 'otak' hasil download Action tadi
 env.allowRemoteModels = false;
 env.localModelPath = './'; 
 
@@ -10,7 +10,7 @@ export async function bangunkanModel() {
     if (model) return true;
     try {
         console.log("Menghubungkan ke folder otak/onnx...");
-        // Memanggil folder 'otak' yang berisi sub-folder 'onnx'
+        // Memanggil model 20MB di folder kamu
         model = await pipeline('text-generation', 'otak', {
             quantized: true,
             model_file_name: 'onnx/model_quantized.onnx' 
@@ -18,29 +18,32 @@ export async function bangunkanModel() {
         console.log("OTAK AKTIF!");
         return true;
     } catch (e) {
-        console.error("Gagal! Cek folder otak/onnx kamu, Lan.", e);
+        console.error("Gagal! Pastikan folder 'otak/onnx' ada.", e);
         return false;
     }
 }
 
+// INI FUNGSI YANG KAMU KASIH TADI, SUDAH MASUK SINI
 export async function tanyaModel(teksUser, dataTambang) {
     if (!model) {
         const siap = await bangunkanModel();
-        if (!siap) return "Sistem gagal akses otak. Pastikan RAM HP tidak penuh.";
+        if (!siap) return "Sistem gagal akses otak lokal.";
     }
 
+    // Prompt cerdas buatanmu
     const prompt = `<|im_start|>system
-Kamu adalah Core Intelligence, asisten pribadi Alan yang cerdas.
-Gunakan info ini sebagai referensi rahasia: "${dataTambang}"
-Jawab pertanyaan Alan dengan bahasa Indonesia yang natural dan pinter.<|im_end|>
+Kamu adalah Core Intelligence, asisten pribadi Alan yang cerdas dan berwawasan luas.
+Gunakan info ini HANYA JIKA RELEVAN: "${dataTambang}"
+TUGAS: Jawablah pertanyaan Alan dengan natural. Kamu bebas menggunakan pengetahuanmu sendiri. 
+Jangan kaku, jangan cuma copy-paste, dan gunakan bahasa Indonesia yang asik.<|im_end|>
 <|im_start|>user
 ${teksUser}<|im_end|>
 <|im_start|>assistant\n`;
 
     const out = await model(prompt, { 
         max_new_tokens: 150, 
-        temperature: 0.7,
-        repetition_penalty: 1.2
+        temperature: 0.8, 
+        repetition_penalty: 1.1 
     });
 
     return out[0].generated_text.split('assistant\n')[1].trim();
