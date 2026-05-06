@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Core AI - Alan Project</title>
+    <title>Core Intelligence - Alan Project</title>
     <script src="otakai.js"></script>
     <style>
         :root { --bg: #090b0f; --panel: #12151a; --accent: linear-gradient(135deg, #4285f4, #9b51e0); --text: #f0f2f5; --border: #23262b; }
         body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        header { padding: 15px; background: rgba(18, 21, 26, 0.9); border-bottom: 1px solid var(--border); text-align: center; font-weight: 800; letter-spacing: 1px; color: #4285f4; }
+        header { padding: 15px; background: rgba(18, 21, 26, 0.9); border-bottom: 1px solid var(--border); text-align: center; font-weight: 800; color: #4285f4; }
         #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        /* CSS biar teks ada spasinya dan gak nempel */
         .msg { max-width: 85%; padding: 12px 18px; border-radius: 20px; font-size: 15px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
         .user { align-self: flex-end; background: #1a73e8; border-bottom-right-radius: 4px; }
         .ai { align-self: flex-start; background: var(--panel); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
@@ -17,7 +18,6 @@
         .input-bar { background: #1c1f26; border: 1px solid var(--border); border-radius: 30px; display: flex; padding: 5px 10px 5px 15px; align-items: center; }
         input { flex: 1; background: transparent; border: none; color: white; padding: 12px; outline: none; font-size: 16px; }
         button { background: var(--accent); border: none; width: 40px; height: 40px; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        button:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
@@ -25,30 +25,39 @@
 <header>CORE INTELLIGENCE AI</header>
 
 <div id="chat-container">
-    <div class="msg ai">Sistem Aktif. Aku sudah siap membaca tambang otakmu, Lan!</div>
+    <div id="status-ai" class="msg ai" style="font-style: italic; opacity: 0.7;">Sedang menyiapkan otak AI...</div>
 </div>
 
 <div class="input-area">
     <div class="input-bar">
-        <input type="text" id="userInput" placeholder="Tanya tentang trading, project, dll...">
-        <button id="sendBtn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-        </button>
+        <input type="text" id="userInput" placeholder="Tanya tentang tambang otak...">
+        <button id="sendBtn">↑</button>
     </div>
 </div>
 
 <script type="module">
-    // Hubungkan dengan brain.js di root
+    // 2. Hubungkan dengan otak tunggal (brain.js)
     import { bangunkanModel, tanyaModel } from './brain.js';
 
     const inputField = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
     const chatContainer = document.getElementById('chat-container');
+    const statusBox = document.getElementById('status-ai');
 
-    // Aktifkan Otak AI
-    bangunkanModel();
+    // Aktifkan Otak AI saat web dibuka
+    async function init() {
+        const siap = await bangunkanModel();
+        if (siap) {
+            statusBox.textContent = "Sistem Aktif. Halo Alan, ada yang bisa kubantu?";
+            statusBox.style.fontStyle = "normal";
+            statusBox.style.opacity = "1";
+        } else {
+            statusBox.textContent = "Gagal memuat model. Menggunakan mode database saja.";
+        }
+    }
+    init();
 
-    // Fungsi cari daging di otakai.js
+    // Fungsi cari referensi di otakai.js
     function ambilData(q) {
         if (typeof otakAI === 'undefined') return "";
         const query = q.toLowerCase();
@@ -56,6 +65,7 @@
             (i.topic || "").toLowerCase().includes(query) || 
             (i.summary || "").toLowerCase().includes(query)
         );
+        // Ambil semua yang relevan gabung jadi satu konteks
         return matches.map(m => m.summary).join("\n");
     }
 
@@ -63,21 +73,20 @@
         const text = inputField.value.trim();
         if (!text) return;
 
-        // Tampilkan chat user
         appendMsg(text, 'user');
         inputField.value = '';
 
-        // Ambil data referensi dari tambang
+        // Cari referensi di tambang
         const dataReferensi = ambilData(text);
         
-        // Buat balon chat AI (loading)
-        const aiMsgBox = appendMsg("AI sedang mengolah data...", 'ai');
+        // Buat balon chat AI (Sedang Mikir)
+        const aiMsgBox = appendMsg("AI sedang merangkai kata...", 'ai');
 
         try {
-            // KIRIM KE brain.js buat diolah (Gak bakal mentah lagi)
+            // 3. PAKSA SI MODEL (brain.js) BUAT NGOLAH DATA
             const jawabanAI = await tanyaModel(text, dataReferensi);
             
-            // Efek ngetik rapi
+            // Efek ngetik rapi (textContent menjaga spasi tetap aman)
             aiMsgBox.textContent = "";
             let i = 0;
             function ngetik() {
@@ -90,12 +99,11 @@
             }
             ngetik();
         } catch (e) {
-            // Backup kalau model belum siap
-            aiMsgBox.textContent = dataReferensi || "Maaf Lan, otak AI-nya masih loading. Coba lagi ya!";
+            // Jika model belum bangun/eror, tampilkan data mentah
+            aiMsgBox.textContent = dataReferensi || "Maaf Lan, otak AI lagi loading. Coba tanya lagi ya!";
         }
     }
 
-    // Listener Tombol & Enter
     sendBtn.addEventListener('click', eksekusiKirim);
     inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') eksekusiKirim(); });
 
