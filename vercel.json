@@ -1,18 +1,13 @@
 {
   "headers": [
     {
-      "source": "/brain/onnx/(.*)",
+      "source": "/otak/onnx/(.*)",
       "headers": [
         {
           "key": "Content-Type",
           "value": "application/octet-stream"
-        },
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
         }
       ]
     }
   ]
 }
-
