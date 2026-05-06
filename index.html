@@ -6,93 +6,17 @@
     <title>Core Intelligence AI</title>
     <script src="otakai.js"></script>
     <style>
-        :root { 
-            --bg: #090b0f; 
-            --panel: #12151a; 
-            --accent: linear-gradient(135deg, #4285f4, #9b51e0); 
-            --text: #f0f2f5; 
-            --border: #23262b; 
-        }
-        body { 
-            font-family: 'Inter', -apple-system, sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            overflow: hidden; 
-        }
-        header { 
-            padding: 15px; 
-            background: rgba(18, 21, 26, 0.9); 
-            border-bottom: 1px solid var(--border); 
-            text-align: center; 
-            font-weight: 800; 
-            color: #4285f4; 
-            letter-spacing: 1px;
-        }
-        #chat-container { 
-            flex: 1; 
-            overflow-y: auto; 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-        }
-        .msg { 
-            max-width: 85%; 
-            padding: 12px 18px; 
-            border-radius: 20px; 
-            font-size: 15px; 
-            line-height: 1.6; 
-            white-space: pre-wrap; 
-            word-break: break-word; 
-        }
-        .user { 
-            align-self: flex-end; 
-            background: #1a73e8; 
-            border-bottom-right-radius: 4px; 
-        }
-        .ai { 
-            align-self: flex-start; 
-            background: var(--panel); 
-            border: 1px solid var(--border); 
-            border-bottom-left-radius: 4px; 
-        }
-        .input-area { 
-            padding: 20px; 
-            background: var(--bg); 
-        }
-        .input-bar { 
-            background: #1c1f26; 
-            border: 1px solid var(--border); 
-            border-radius: 30px; 
-            display: flex; 
-            padding: 5px 10px 5px 15px; 
-            align-items: center; 
-        }
-        input { 
-            flex: 1; 
-            background: transparent; 
-            border: none; 
-            color: white; 
-            padding: 12px; 
-            outline: none; 
-            font-size: 16px; 
-        }
-        button { 
-            background: var(--accent); 
-            border: none; 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            color: white; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-        }
+        :root { --bg: #090b0f; --panel: #12151a; --accent: linear-gradient(135deg, #4285f4, #9b51e0); --text: #f0f2f5; --border: #23262b; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        header { padding: 15px; background: rgba(18, 21, 26, 0.9); border-bottom: 1px solid var(--border); text-align: center; font-weight: 800; color: #4285f4; letter-spacing: 1px; }
+        #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 85%; padding: 12px 18px; border-radius: 20px; font-size: 15px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+        .user { align-self: flex-end; background: #1a73e8; border-bottom-right-radius: 4px; }
+        .ai { align-self: flex-start; background: var(--panel); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+        .input-area { padding: 20px; background: var(--bg); }
+        .input-bar { background: #1c1f26; border: 1px solid var(--border); border-radius: 30px; display: flex; padding: 5px 10px 5px 15px; align-items: center; }
+        input { flex: 1; background: transparent; border: none; color: white; padding: 12px; outline: none; font-size: 16px; }
+        button { background: var(--accent); border: none; width: 40px; height: 40px; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -100,12 +24,12 @@
 <header>CORE INTELLIGENCE AI</header>
 
 <div id="chat-container">
-    <div id="status-ai" class="msg ai" style="font-style: italic; opacity: 0.7;">Memuat sistem otak...</div>
+    <div id="status-ai" class="msg ai" style="font-style: italic; opacity: 0.7;">Menghubungkan ke folder otak...</div>
 </div>
 
 <div class="input-area">
     <div class="input-bar">
-        <input type="text" id="userInput" placeholder="Tanya apa saja...">
+        <input type="text" id="userInput" placeholder="Tanya Alan Project...">
         <button id="sendBtn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
         </button>
@@ -113,7 +37,6 @@
 </div>
 
 <script type="module">
-    // Mengimpor fungsi dari brain.js yang ada di root
     import { bangunkanModel, tanyaModel } from './brain.js';
 
     const inputField = document.getElementById('userInput');
@@ -121,21 +44,20 @@
     const chatContainer = document.getElementById('chat-container');
     const statusBox = document.getElementById('status-ai');
 
-    // Inisialisasi Model AI
-    async function mulai() {
+    // Aktifkan Otak AI pas dibuka
+    async function init() {
         const siap = await bangunkanModel();
         if (siap) {
-            statusBox.textContent = "Sistem Aktif. Halo, ada yang bisa kubantu hari ini?";
+            statusBox.textContent = "Sistem Aktif. Halo Alan, ada yang bisa kubantu?";
             statusBox.style.fontStyle = "normal";
             statusBox.style.opacity = "1";
         } else {
-            statusBox.textContent = "Otak AI sedang sibuk. Pastikan RAM cukup dan coba lagi.";
+            statusBox.textContent = "Gagal akses folder otak. Cek koneksi atau RAM HP.";
         }
     }
-    mulai();
+    init();
 
-    // Fungsi mengambil referensi tambang (Hanya dikirim ke model)
-    function ambilKonteksTambang(q) {
+    function ambilDataTambang(q) {
         if (typeof otakAI === 'undefined') return "";
         const query = q.toLowerCase();
         let matches = otakAI.filter(i => 
@@ -149,21 +71,16 @@
         const text = inputField.value.trim();
         if (!text) return;
 
-        // Tampilkan pesan user
         appendMsg(text, 'user');
         inputField.value = '';
 
-        // Ambil data dari otakai.js secara rahasia
-        const dataTambang = ambilKonteksTambang(text);
-        
-        // Munculkan indikator AI sedang mikir
+        const dataRahasia = ambilDataTambang(text);
         const aiMsgBox = appendMsg("...", 'ai');
 
         try {
-            // Panggil model untuk mengolah jawaban
-            const jawabanAI = await tanyaModel(text, dataTambang);
+            // Proses di Model Lokal (Folder Otak)
+            const jawabanAI = await tanyaModel(text, dataRahasia);
             
-            // Tampilkan jawaban dengan efek ngetik
             aiMsgBox.textContent = "";
             let i = 0;
             function ngetik() {
@@ -176,7 +93,7 @@
             }
             ngetik();
         } catch (e) {
-            aiMsgBox.textContent = "Maaf, terjadi kesalahan saat memproses permintaan.";
+            aiMsgBox.textContent = "Maaf Lan, otak AI-nya lagi sibuk. Coba tanya lagi.";
         }
     }
 
