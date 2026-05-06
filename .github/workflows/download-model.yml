@@ -1,0 +1,32 @@
+name: Download AI Model to Repo
+on: 
+  workflow_dispatch: # Biar kamu bisa klik "Run" manual dari menu Actions
+
+jobs:
+  download-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Create Brain Folder
+        run: mkdir -p brain
+
+      - name: Download SmolLM Model Files
+        run: |
+          cd brain
+          curl -L -O https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/config.json
+          curl -L -O https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/tokenizer.json
+          curl -L -O https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/tokenizer_config.json
+          curl -L -O https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/special_tokens_map.json
+          mkdir -p onnx
+          cd onnx
+          curl -L -O https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/onnx/model_quantized.onnx
+
+      - name: Commit and Push Model
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add brain/
+          git commit -m "Add local AI model files to brain folder"
+          git push
