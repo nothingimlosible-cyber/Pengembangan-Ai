@@ -1,6 +1,6 @@
 import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
 
-// WAJIB: Jangan cari ke internet, pake file di repo
+// Matikan koneksi ke internet, paksa pake file di GitHub kamu
 env.allowRemoteModels = false;
 env.localModelPath = './'; 
 
@@ -9,37 +9,35 @@ let model = null;
 export async function bangunkanModel() {
     if (model) return true;
     try {
-        console.log("Menghubungkan ke folder brain...");
-        // Memanggil folder 'brain' yang ada di GitHub kamu
+        console.log("Membuka folder brain...");
+        // Kita panggil folder 'brain' dan arahkan ke file onnx di dalamnya
         model = await pipeline('text-generation', 'brain', {
             quantized: true,
-            model_file_name: 'onnx/model_quantized.onnx' 
+            model_file_name: 'onnx/model_quantized.onnx'
         });
-        console.log("SISTEM AKTIF!");
+        console.log("OTAK AKTIF!");
         return true;
     } catch (e) {
-        console.error("Gagal! Cek apakah file .onnx ada di brain/onnx/", e);
+        console.error("Gagal load model:", e);
         return false;
     }
 }
 
 export async function tanyaModel(teksUser, dataTambang) {
-    if (!model) {
-        const siap = await bangunkanModel();
-        if (!siap) return "Gagal memuat otak lokal.";
-    }
-
+    if (!model) await bangunkanModel();
+    
     const prompt = `<|im_start|>system
-Kamu adalah Core Intelligence, asisten Alan yang cerdas.
-Gunakan info ini: "${dataTambang}"
-Jawablah dengan natural dan asik.<|im_end|>
+Kamu adalah Core Intelligence, asisten cerdas Alan.
+Gunakan info ini jika relevan: "${dataTambang}"
+Jawab dengan gaya yang asik dan pinter.<|im_end|>
 <|im_start|>user
 ${teksUser}<|im_end|>
 <|im_start|>assistant\n`;
 
     const out = await model(prompt, { 
         max_new_tokens: 150, 
-        temperature: 0.8 
+        temperature: 0.8,
+        repetition_penalty: 1.1 
     });
 
     return out[0].generated_text.split('assistant\n')[1].trim();
