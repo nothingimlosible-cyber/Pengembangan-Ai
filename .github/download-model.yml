@@ -1,0 +1,27 @@
+name: Download AI Model
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  ambil-otak:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download Files
+        run: |
+          mkdir -p brain/onnx
+          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/config.json" -o brain/config.json
+          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/tokenizer.json" -o brain/tokenizer.json
+          curl -L "https://huggingface.co/Xenova/SmolLM-135M-Instruct/resolve/main/onnx/model_quantized.onnx" -o brain/onnx/model_quantized.onnx
+          
+      - name: Push Ke Repo
+        run: |
+          git config user.name "github-actions"
+          git config user.email "action@github.com"
+          git add .
+          git commit -m "Update model fisik" || exit 0
+          git push
+
